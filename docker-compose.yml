@@ -1,0 +1,12 @@
+services:
+  nestjs:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: nest_supabase_API
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env.production.local
+    restart: on-failure
+

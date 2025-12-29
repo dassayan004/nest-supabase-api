@@ -2,7 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { APP_TITLE, AppLogger, ConfigSchema } from '~/common';
+import {
+  APP_TITLE,
+  AppLogger,
+  ConfigSchema,
+  SWAGGER_DESCRIPTION,
+  SWAGGER_EXTERNAL_DOC,
+  SWAGGER_PREFIX,
+} from '~/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -17,20 +24,21 @@ async function bootstrap() {
   const env = configService.getOrThrow<string>('NODE_ENV');
 
   // swagger openapi
-  const swaggerPrefix = 'swagger';
+
   const config = new DocumentBuilder()
     .setTitle(APP_TITLE)
-    .setDescription('API')
+    .setDescription(SWAGGER_DESCRIPTION)
     .setVersion(env.toUpperCase())
     .addServer(baseUrl)
-    .setExternalDoc('Postman Collection', `${swaggerPrefix}/json`)
+    .setExternalDoc('📥 Download Postman Collection', SWAGGER_EXTERNAL_DOC)
     .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup(swaggerPrefix, app, document, {
-    jsonDocumentUrl: `${swaggerPrefix}/json`,
+  SwaggerModule.setup(SWAGGER_PREFIX, app, document, {
+    jsonDocumentUrl: SWAGGER_EXTERNAL_DOC,
+    customSiteTitle: `${APP_TITLE} Docs - ${SWAGGER_PREFIX.toUpperCase()}`,
   });
 
   // Middleware
@@ -50,6 +58,6 @@ async function bootstrap() {
 
   await app.listen(port);
   Logger.log(`🚀 Application is running on: ${baseUrl}`);
-  Logger.log(`🌎 Swagger is running on: ${baseUrl}/${swaggerPrefix}`);
+  Logger.log(`🌎 Swagger is running on: ${baseUrl}/${SWAGGER_PREFIX}`);
 }
 bootstrap();
