@@ -1,1 +1,1 @@
-export const APP_TITLE = 'Nest AI';
+export const APP_TITLE = 'Nest Supabase API';

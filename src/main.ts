@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { APP_TITLE, AppLogger, ConfigSchema } from '~/common';
 import { ConfigService } from '@nestjs/config';
@@ -23,8 +23,8 @@ async function bootstrap() {
     .setDescription('API')
     .setVersion(env.toUpperCase())
     .addServer(baseUrl)
-    .addBearerAuth()
     .setExternalDoc('Postman Collection', `${swaggerPrefix}/json`)
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -38,6 +38,15 @@ async function bootstrap() {
     origin: ['*'],
   });
   app.enableShutdownHooks();
+
+  // Pipes
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   await app.listen(port);
   Logger.log(`🚀 Application is running on: ${baseUrl}`);

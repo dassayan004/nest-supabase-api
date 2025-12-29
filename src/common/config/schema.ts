@@ -14,8 +14,8 @@ export const configSchema = z.object({
       }
       return num;
     }),
-  DATABASE_URL: z.string(),
-  // RTSP_SERVER_URL: z.url(),
+  SUPABASE_URL: z.url(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string(),
 });
 
 export type ConfigSchema = z.infer<typeof configSchema>;
